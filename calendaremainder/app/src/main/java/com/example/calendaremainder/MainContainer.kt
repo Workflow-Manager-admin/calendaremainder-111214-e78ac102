@@ -7,14 +7,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +32,11 @@ class MainContainer : ComponentActivity() {
     }
 }
 
+
+/*
+ * --- MAIN ENTRY ---
+ * Scaffold with TopBar and BottomBar; main content uses Material Cards for each feature block.
+ */
 @Composable
 fun MainContainerScaffold() {
     val navItems = listOf(
@@ -77,142 +81,136 @@ fun MainContainerScaffold() {
             )
         }
     ) { padVals ->
-        // New: Render all sections as visible placeholders stacked vertically for clear demonstration.
-        // Refactored to show each feature as a visually distinct, icon-accented Material Card
+        // Arrange each feature as a Material Card with spacing and theming
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(AppColors.background)
                 .padding(padVals)
-                .padding(horizontal = 8.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 12.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            FeatureSectionCard(
+            FeatureSectionMaterialCard(
                 icon = Icons.Filled.DateRange,
                 label = "Calendar View",
                 color = AppColors.primary,
                 buttonLabel = "View Calendar"
-            ) {
-                CalendarViewScreen()
-            }
-            FeatureSectionCard(
+            )
+
+            FeatureSectionMaterialCard(
                 icon = Icons.Filled.EventAvailable,
                 label = "Event Management",
                 color = AppColors.secondary,
                 buttonLabel = "Manage Events"
-            ) {
-                EventManagementScreen()
-            }
-            FeatureSectionCard(
+            )
+
+            FeatureSectionMaterialCard(
                 icon = Icons.Filled.Notifications,
                 label = "Notifications",
                 color = AppColors.accent,
                 buttonLabel = "View Alerts"
-            ) {
-                NotificationsScreen()
-            }
-            FeatureSectionCard(
+            )
+
+            FeatureSectionMaterialCard(
                 icon = Icons.Filled.Person,
                 label = "User Authentication",
                 color = AppColors.primary,
                 buttonLabel = "Login"
-            ) {
-                AuthenticationScreen()
-            }
-            FeatureSectionCard(
+            )
+
+            FeatureSectionMaterialCard(
                 icon = Icons.Filled.CloudOff,
                 label = "Offline Mode",
                 color = AppColors.secondary,
                 buttonLabel = "Sync/Offline"
-            ) {
-                OfflineModeScreen()
-            }
+            )
         }
     }
 }
 
 /**
- * Displays a visually distinct MaterialCard for a feature section with an icon, label, and placeholder button/action.
+ * PUBLIC_INTERFACE
+ * FeatureSectionMaterialCard: A distinct Material Card for each main feature, using icon, title, button.
+ * Button is placeholder (disabled), title uses section color, card surfaces are lightly elevated.
  */
-// PUBLIC_INTERFACE
 @Composable
-fun FeatureSectionCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+fun FeatureSectionMaterialCard(
+    icon: ImageVector,
     label: String,
     color: Color,
-    buttonLabel: String,
-    content: @Composable () -> Unit
+    buttonLabel: String
 ) {
     Card(
-        elevation = 6.dp,
+        elevation = 8.dp,
         backgroundColor = Color.White,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp),
-        shape = RoundedCornerShape(14.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icon (feature symbol)
             Box(
                 Modifier
-                    .background(color.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp))
-                    .padding(12.dp)
+                    .background(color.copy(alpha = 0.14f), shape = RoundedCornerShape(8.dp))
+                    .padding(14.dp)
             ) {
-                Icon(icon, contentDescription = label, tint = color, modifier = Modifier.size(32.dp))
+                Icon(icon, contentDescription = label, tint = color, modifier = Modifier.size(34.dp))
             }
-            Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(16.dp))
             Column(
                 modifier = Modifier.weight(1f).padding(end = 8.dp)
             ) {
                 Text(
                     text = label,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
+                    fontSize = 18.sp,
                     color = color
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                // Place either real content or a minimal placeholder here
-                Box(Modifier.fillMaxWidth()) {
-                    content()
-                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = featureDescriptionForLabel(label),
+                    color = color.copy(alpha = 0.88f),
+                    fontSize = 15.sp
+                )
             }
-            Spacer(modifier = Modifier.width(6.dp))
-            // Placeholder action Button (disabled for now)
+            Spacer(modifier = Modifier.width(10.dp))
+            // Interactive, but currently disabled placeholder button
             Button(
-                onClick = { /* TODO: Activate action when feature is built */ },
-                colors = ButtonDefaults.buttonColors(backgroundColor = color, contentColor = Color.White),
-                shape = RoundedCornerShape(8.dp),
-                enabled = false, // Placeholder only
-                modifier = Modifier
-                    .height(36.dp)
+                onClick = { /* Placeholder. Actual actions TBD. */ },
+                enabled = false,
+                shape = RoundedCornerShape(9.dp),
+                modifier = Modifier.height(36.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = color,
+                    contentColor = Color.White,
+                    disabledBackgroundColor = color.copy(alpha = 0.4f),
+                    disabledContentColor = Color.White.copy(alpha = 0.7f)
+                )
             ) {
-                Text(buttonLabel, fontSize = 12.sp)
+                Text(buttonLabel, fontSize = 13.sp)
             }
         }
     }
 }
 
-// PUBLIC_INTERFACE
-@Composable
-fun OfflineModeScreen() {
-    // Placeholder for offline/sync features
-    Box(
-        Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Text(
-            "Offline Mode (Local Storage/Sync)\n[TODO: Sync & offline logic UI]",
-            color = AppColors.secondary
-        )
-    }
+/**
+ * Returns a short placeholder description for each feature label.
+ * All descriptions below are for visual guidance; can later be replaced with live content.
+ */
+fun featureDescriptionForLabel(label: String): String = when (label) {
+    "Calendar View" -> "See your calendar by month, week, or day."
+    "Event Management" -> "Add, edit, or delete events and reminders."
+    "Notifications" -> "Never miss important events—see upcoming reminders."
+    "User Authentication" -> "Login, register, and manage your profile."
+    "Offline Mode" -> "Full access anywhere—even without internet."
+    else -> ""
 }
 
-data class NavSection(val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
+data class NavSection(val label: String, val icon: ImageVector)
 
 /** App color constants following provided scheme. */
 object AppColors {
@@ -222,6 +220,10 @@ object AppColors {
     val background = Color(0xFFF9F9F9)
 }
 
+/**
+ * PUBLIC_INTERFACE
+ * App-wide MaterialTheme with custom color scheme.
+ */
 @Composable
 fun CalendaRemainderAppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
@@ -250,44 +252,26 @@ fun CalendaRemainderAppTheme(content: @Composable () -> Unit) {
     )
 }
 
-// --- Feature Screens (Minimal Placeholders) ---
+/*
+ * --- Placeholder Feature Screens (NOOP: UI Demos only for now, logic to be added in future) ---
+ */
 
 // PUBLIC_INTERFACE
 @Composable
-fun CalendarViewScreen() {
-    // Displays calendar in various views (month, week, day)
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Calendar View (month/week/day selector)\n[TODO: Calendar UI]", color = AppColors.primary)
-    }
-}
+fun CalendarViewScreen() {/* NOOP placeholder, handled by card */}
 
 // PUBLIC_INTERFACE
 @Composable
-fun EventManagementScreen() {
-    // Create, edit, delete events and reminders
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Event Management (Add/Edit/Delete)\n[TODO: Event CRUD UI]", color = AppColors.secondary)
-    }
-}
+fun EventManagementScreen() {/* NOOP placeholder, handled by card */}
 
 // PUBLIC_INTERFACE
 @Composable
-fun NotificationsScreen() {
-    // Push notifications for upcoming events and reminders
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Notifications [TODO: Show reminders for events]", color = AppColors.accent)
-    }
-}
+fun NotificationsScreen() {/* NOOP placeholder, handled by card */}
 
 // PUBLIC_INTERFACE
 @Composable
-fun AuthenticationScreen() {
-    // Login and user management features
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Authentication (Login/Logout/Profile)\n[TODO: Auth UI]", color = AppColors.primary)
-    }
-}
+fun AuthenticationScreen() {/* NOOP placeholder, handled by card */}
 
-// --- Offline Mode Note ---
-// For the minimal container, offline mode support will be realized in future subcomponents as local storage/sync logic.
-
+// PUBLIC_INTERFACE
+@Composable
+fun OfflineModeScreen() {/* NOOP placeholder, handled by card */}
