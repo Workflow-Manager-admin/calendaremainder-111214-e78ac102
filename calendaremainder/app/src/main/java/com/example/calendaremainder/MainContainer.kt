@@ -78,41 +78,52 @@ fun MainContainerScaffold() {
         }
     ) { padVals ->
         // New: Render all sections as visible placeholders stacked vertically for clear demonstration.
+        // Refactored to show each feature as a visually distinct, icon-accented Material Card
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(AppColors.background)
                 .padding(padVals)
-                .padding(horizontal = 8.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 8.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FeaturePlaceholderCard(
-                title = "Calendar View",
-                color = AppColors.primary
+            FeatureSectionCard(
+                icon = Icons.Filled.DateRange,
+                label = "Calendar View",
+                color = AppColors.primary,
+                buttonLabel = "View Calendar"
             ) {
                 CalendarViewScreen()
             }
-            FeaturePlaceholderCard(
-                title = "Event Management",
-                color = AppColors.secondary
+            FeatureSectionCard(
+                icon = Icons.Filled.EventAvailable,
+                label = "Event Management",
+                color = AppColors.secondary,
+                buttonLabel = "Manage Events"
             ) {
                 EventManagementScreen()
             }
-            FeaturePlaceholderCard(
-                title = "Notifications",
-                color = AppColors.accent
+            FeatureSectionCard(
+                icon = Icons.Filled.Notifications,
+                label = "Notifications",
+                color = AppColors.accent,
+                buttonLabel = "View Alerts"
             ) {
                 NotificationsScreen()
             }
-            FeaturePlaceholderCard(
-                title = "User Authentication",
-                color = AppColors.primary
+            FeatureSectionCard(
+                icon = Icons.Filled.Person,
+                label = "User Authentication",
+                color = AppColors.primary,
+                buttonLabel = "Login"
             ) {
                 AuthenticationScreen()
             }
-            FeaturePlaceholderCard(
-                title = "Offline Mode",
-                color = AppColors.secondary
+            FeatureSectionCard(
+                icon = Icons.Filled.CloudOff,
+                label = "Offline Mode",
+                color = AppColors.secondary,
+                buttonLabel = "Sync/Offline"
             ) {
                 OfflineModeScreen()
             }
@@ -120,29 +131,67 @@ fun MainContainerScaffold() {
     }
 }
 
+/**
+ * Displays a visually distinct MaterialCard for a feature section with an icon, label, and placeholder button/action.
+ */
 // PUBLIC_INTERFACE
 @Composable
-fun FeaturePlaceholderCard(title: String, color: Color, content: @Composable () -> Unit) {
+fun FeatureSectionCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    color: Color,
+    buttonLabel: String,
+    content: @Composable () -> Unit
+) {
     Card(
-        elevation = 4.dp,
+        elevation = 6.dp,
         backgroundColor = Color.White,
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        shape = RoundedCornerShape(14.dp)
     ) {
-        Column(
-            Modifier
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = color
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Box(Modifier.fillMaxWidth()) {
-                content()
+            // Icon (feature symbol)
+            Box(
+                Modifier
+                    .background(color.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp))
+                    .padding(12.dp)
+            ) {
+                Icon(icon, contentDescription = label, tint = color, modifier = Modifier.size(32.dp))
+            }
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(
+                modifier = Modifier.weight(1f).padding(end = 8.dp)
+            ) {
+                Text(
+                    text = label,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = color
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                // Place either real content or a minimal placeholder here
+                Box(Modifier.fillMaxWidth()) {
+                    content()
+                }
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            // Placeholder action Button (disabled for now)
+            Button(
+                onClick = { /* TODO: Activate action when feature is built */ },
+                colors = ButtonDefaults.buttonColors(backgroundColor = color, contentColor = Color.White),
+                shape = RoundedCornerShape(8.dp),
+                enabled = false, // Placeholder only
+                modifier = Modifier
+                    .height(36.dp)
+            ) {
+                Text(buttonLabel, fontSize = 12.sp)
             }
         }
     }
