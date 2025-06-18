@@ -69,27 +69,97 @@ fun MainContainerScaffold() {
                 elevation = 8.dp,
                 title = {
                     Text(
-                        text = navItems[selectedIndex].label,
+                        text = "CalendaRemainder",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
                 }
             )
         }
-    ) {
-        Box(
-            Modifier
+    ) { padVals ->
+        // New: Render all sections as visible placeholders stacked vertically for clear demonstration.
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .background(AppColors.background)
-                .padding(it)
+                .padding(padVals)
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            when (selectedIndex) {
-                0 -> CalendarViewScreen()
-                1 -> EventManagementScreen()
-                2 -> NotificationsScreen()
-                3 -> AuthenticationScreen()
+            FeaturePlaceholderCard(
+                title = "Calendar View",
+                color = AppColors.primary
+            ) {
+                CalendarViewScreen()
+            }
+            FeaturePlaceholderCard(
+                title = "Event Management",
+                color = AppColors.secondary
+            ) {
+                EventManagementScreen()
+            }
+            FeaturePlaceholderCard(
+                title = "Notifications",
+                color = AppColors.accent
+            ) {
+                NotificationsScreen()
+            }
+            FeaturePlaceholderCard(
+                title = "User Authentication",
+                color = AppColors.primary
+            ) {
+                AuthenticationScreen()
+            }
+            FeaturePlaceholderCard(
+                title = "Offline Mode",
+                color = AppColors.secondary
+            ) {
+                OfflineModeScreen()
             }
         }
+    }
+}
+
+// PUBLIC_INTERFACE
+@Composable
+fun FeaturePlaceholderCard(title: String, color: Color, content: @Composable () -> Unit) {
+    Card(
+        elevation = 4.dp,
+        backgroundColor = Color.White,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = color
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Box(Modifier.fillMaxWidth()) {
+                content()
+            }
+        }
+    }
+}
+
+// PUBLIC_INTERFACE
+@Composable
+fun OfflineModeScreen() {
+    // Placeholder for offline/sync features
+    Box(
+        Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Text(
+            "Offline Mode (Local Storage/Sync)\n[TODO: Sync & offline logic UI]",
+            color = AppColors.secondary
+        )
     }
 }
 
